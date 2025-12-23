@@ -1,0 +1,125 @@
+* MAX4490 MACROMODEL
+* ----------------------------
+* Revision 0. 10/2005
+* ----------------------------
+* The MAX4490 low cost high slew rate opamp operates from a single +2.7V to 5.5V
+* Supply, feature ground sensing inputs and rail to rail outputs and are unity 
+* gain stable with capacitive loads upto 300pF.
+* ----------------------------
+* Connections
+*       1 = Noninverting input of the amplifier
+*       2 = Negative power supply
+*       3 = Inverting input of the amplifier
+*       4 = Amplifier output
+*       5 = Positive power supply   
+*-----------------------------
+
+**********************************
+.SUBCKT MAX4490 1 2 3 4 5
+ XAMP4490 1 2 3 4 5 MAX4490_S
+.ENDS
+**********************************
+
+**********************************
+.SUBCKT MAX4490_S 17 18 15 42 10
+**********************************
+*INPUT STAGE
+VS1 10 11 0V
+FSUP 18 10 VS1 1
+IBIAS 11 12 144.7U 
+*IBIAS 11 12 363.76U 
+M1 13 16 12 12 MOSP
+M2 14 15 12 12 MOSP
+VOS 17 16 1.5M   
+RD1 13 18 1K    
+RD2 14 18 1K
+C1 13 14 4.0P    
+CIN1 16 100 5P
+CIN2 15 100 5P
+**************
+*INPUT BIAS CURRENT 
+IBIAS1 12 16 50P
+IBIAS2 12 15 50P 
+**************
+*MAXIMUM INPUT COMMON MODE VOLTAGE LIMIT
+DIL 12 80 DZ
+RIL 80 82 100 
+VIL 82 81 1.065V
+EIL 81 18 10 18 1
+**************
+*MINIMUM SUPPLY VOLTAGE LIMIT 
+VVL 85 18 2.7V
+VIS4 85 86 0V
+RVL 86 87 1K
+DVL3 87 88 DY
+EVL 88 18 10 18 1
+DVL4 18 12 DY
+DVL5 12 84 DY
+FVL 84 18 VIS4 4 
+**************************************************
+*GAIN STAGE 
+GA 25 100 14 13 439.82U  
+RO1 25 100 2.274K
+GB 26 100 25 100 1
+RO2 26 100 316.33K
+EF 27 100 26 100 1   
+RLF 27 100 1MEG 
+CC 25 27 6.25P        
+***************
+*VOLTAGE LIMITING
+DP1 26 151 DY           
+EP1 151 153 10 18 0.5
+EP3 153 155 27 199 1
+HCOMP1 100 155 VIS2 45.0
+DP2 152 26 DY
+EP2 154 152 10 18 0.5
+EP4 156 154 199 26 1
+HCOMP2 100 156 VIS2 28.4
+**************************************************
+*CMRR (CMRR DC RESPONSE)
+GCM 100 25 18 12 78.2N 
+**************************************************
+*PSRR (PSRR DC RESPONSE)
+GPS 100 25 10 18 4.398N 
+**************************************************
+****************
+*CURRENT LIMITING
+RO3 27 199 84
+D1 30 199 DY
+D2 199 28 DY
+D3 29 28 DY
+D4 30 29 DY
+ILIM1 28 30 50M
+RILIM 28 30 1MEG
+**************************************************
+VIS2 29 42 0V    
+**************************************************
+*INTERNAL GND AT VDD/2
+EG1 100 18 10 18 0.5
+**************************************************
+*SUPPLY CURRENT MODEL
+*STANDBY CURRENT
+ISUP 10 18 0.67M
+DISUP 10 90 DY
+RISUP 90 91 14.28K
+VISUP 91 18 2.5V
+***************
+*LOAD CURRENT
+DSUP 18 10 DX        
+FIS1 100 60 VIS2 1
+D17 100 60 DX
+D18 60 61 DX
+VIS3 100 61 0V
+FSUP1 18 10 VIS3 1   
+**************************************************
+.MODEL DA D(IS=100E-14 RS=0.5k)
+.MODEL MOSP PMOS(VTO=-0.7 KP=69.2E-4)
+.MODEL DX D(IS=100E-14)
+.MODEL DZ D(N=10M)
+.MODEL DY D(IS=100E-14 N=0.1M)
+**************************************************
+.ENDS
+
+
+
+* Copyright (c) 2003-2012 Maxim Integrated Products.  All Rights Reserved.

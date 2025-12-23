@@ -1,0 +1,326 @@
+*******************************************************************************
+* Copyright (C) Maxim Integrated Products, Inc., All Rights Reserved.
+*
+* Permission is hereby granted, free of charge, to any person obtaining a
+* copy of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+* IN NO EVENT SHALL MAXIM INTEGRATED BE LIABLE FOR ANY CLAIM, DAMAGES
+* OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+* ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+* OTHER DEALINGS IN THE SOFTWARE.
+*
+* Except as contained in this notice, the name of Maxim Integrated
+* Products, Inc. shall not be used except as stated in the Maxim Integrated
+* Products, Inc. Branding Policy.
+*
+* The mere transfer of this software does not imply any licenses
+* of trade secrets, proprietary technology, copyrights, patents,
+* trademarks, maskwork rights, or any other form of intellectual
+* property whatsoever. Maxim Integrated Products, Inc. retains all
+* ownership rights.
+*******************************************************************************
+* MAX6070_33 is a voltage reference with output voltage of 3.3V.
+*************************************************************************
+.SUBCKT MAX6070_33 GND EN FLTR OUTF OUTS IN
+*				   |   |  |    |    |    |
+*				   |   |  |    |    |    Supply Input
+*				   |   |  |    |    Voltage Reference Sense Output	
+*				   |   |  |    Voltage Reference Force Output
+*				   |   |  Filter Input
+*				   |   Enable
+*				   Ground
+*
+* Date of model creation:
+*		5/2015
+*
+* Revision History: 
+* 		v1.0 - Initial Release.
+*
+* Recommendations:
+*     	Use SIMETRIX (or SPICE 2G6; other simulators may require translation)
+*     	For a quick, effective design, use a combination of: data sheet
+* 	  	specs, bench testing, and simulations with this macromodel
+*
+* Supported:
+*     	Typical performance in temperature range of -40 to 125 deg Celsius
+*     	Load regulation is within datasheet specification     
+*     	Overshoot due to line transient is within than datasheet specification
+*     	Overshoot and undershoot due to load transient is within the range given in  datasheet specifications mentioned for MAX6070_33
+*      
+*
+* Not Supported:
+*     	Cfilter and Noise functionality is not modeled
+*
+* Known Discrepancies in Model vs. Datasheet:
+* 	  	Turn-ON settling time does not meet specifications when Cfilter = 0 because Cfilter and Noise functionality is not modeled
+*
+*
+X_1 GND EN FLTR IN OUTS OUTF REFt33 
+.ENDS MAX6070_33
+*************************************************
+.SUBCKT REFt33 1 EN NR 4a 5a 6b
+*Venn EN1 EN 0
+Q20 191 192 193 QLN
+R3 194 195 2
+R4 196 195 2
+R10 197 192 100
+R11 198 199 100
+R12 200 4 1.56
+R13 1 201 1.56
+R16 202 203 6E6
+R17 204 205 1.56
+R18 193 206 1.56
+D7 207 0 DiN
+D8 208 0 DiN
+I8 0 207 0.1m
+I9 0 208 0.1m
+E2 193 0 1 0 1
+E3 205 0 4 0 1
+D9 209 0 DVN
+D10 210 0 DVN
+I10 0 209 2m
+I11 0 210 2m
+*Ren EN 0 10k
+Ven en1 0 5
+X_en en1 0 EN trig shutdown
+So1 5 5a trig 0 smod1
+So2 6 6a trig 0 smod1
+.model smod1 VSWITCH (Ron=0.1 Roff=10g Von=0.8 Voff=0.5)
+E2s 2 0 1 0 1
+*V209 209 0 0
+*V210 210 0 0
+.MODEL DVN D KF=1.05E-14 IS=1E-14 AF=1
+E4 211 212 209 210 2.3
+G2 213 212 207 208 2.8e-6
+R28 214 215 10E3
+E5 216 1 205 1 1
+E6 217 1 193 1 1
+E7 218 1 219 1 1
+R30 216 220 1E6
+R31 217 221 1E6
+R32 218 222 1E6
+R33 1 220 100
+R34 1 221 100
+R35 1 222 100
+E10 223 224 222 1 0.34
+R36 225 219 1E3
+R37 219 226 1E3
+C6 216 220 20E-12
+C7 217 221 0.2E-12
+C8 218 222 2E-12
+E11 227 223 221 1 0.15
+E12 213 227 220 1 0.0632
+E14 228 193 205 193 0.5
+D11 202 205 DD
+D12 193 202 DD
+M1 229 230 201 201 NOUT L=3U W=5000U
+M2 231 232 200 200 POUT L=3U W=5000U
+M3 233 233 204 204 POUT L=3U W=5000U
+M4 234 235 194 194 HVP L=3U W=300U
+M5 236 237 196 196 HVP L=3U W=300U
+M8 238 238 206 206 NOUT L=3U W=5000U
+R43 239 232  10
+R44 240 230  10
+G3 202 228 241 228 2e-6
+R45 228 202 6E9
+C12 203 6 1.35E-12
+R46 193 234 2.05E3
+R47 193 236 2.05E3
+C13 234 236 1E-12
+C14 213 0 4.5E-12
+C15 211 0 4.5E-12
+C16 6 0 10E-12
+D13 230 191 DD
+D14 242 232 DD
+Q15 242 198 205 QLP
+V18 213 243 0
+M16 244 245 246 246 HVN L=3U W=300U
+R53 247 246 2
+M17 248 249 250 250 HVN L=3U W=300U
+R54 247 250 2
+R55 244 205 2.05E3
+R56 248 205 2.05E3
+C20 244 248 1E-12
+V19 243 251 0
+M18 252 253 254 254 PIN L=6U W=500U
+M19 255 256 205 205 PIN L=6U W=500U
+V20 205 253 1
+M21 247 252 193 193 NIN L=6U W=500U
+M22 252 252 193 193 NIN L=6U W=500U
+G6 202 228 257 228 0.2E-5
+E17 226 190 213 1 1
+E18 225 190 212 1 1
+M23 256 256 205 205 PIN L=6U W=500U
+V21 255 195 0
+En3 3 0 4 0 1
+Rnr NR 0 10k
+*R77 212 5 ares 88.331E3
+R77 212 5 ares 54.32289E3
+R78 2 212 31.043E3
+.model ares res (tc1=-2.2e-5)
+D401 6a lima DY
+D402 limb 6a DY
+D403 6b lima DY
+D404 limb 6b DY
+I400 lima limb 25m
+.MODEL DY D(IS=100E-14)
+*Esh sh 0 table {V(5)}=(0,1) (1,1) (1.1,0)
+*G60 6 0 value={V(sh)*(-25m)}
+*Esh1 sh1 0 table {V(5)}=(0,0) (2.6,0) (2.7,1)
+*G61 6 0 value={V(sh1)*(-25m)}
+V4a 4a 4 0
+G4a 4a 0 value={-I(v4a)}
+Gin 4a 0 value={V(trig)*(138u+1.8u*V(4a))+3u}
+R59 6 231  5
+R60 229 6  5
+J1 205 213 205 JC
+J2 205 211 205 JC
+J3 211 193 211 JC
+J4 213 193 213 JC
+C21 213 211 3.5E-12
+E19 258 228 248 244 1
+R61 258 257 10k
+C22 257 228 1E-12
+E20 259 228 236 234 1
+R62 259 241 10k
+C23 241 228 1E-12
+G7 260 228 202 228 -0.45m
+G8 228 261 202 228 1E-3
+G9 228 262 238 193 1E-3
+*G10 263 228 205 233 1.80528E-3
+G10 263 228 205 233 1E-3
+D17 263 260 DD
+D18 261 262 DD
+R66 260 263 1E8
+R67 262 261 1E8
+R68 263 205 1E3
+R69 193 262 1E3
+E23 205 239 value={V(205,263)}
+E24 240 193 value={V(262,193)}
+R70 261 228 1E6
+R71 262 228 1E6
+R72 228 263 1E6
+R73 228 260 1E6
+V23 264 190 1.2
+C27 232 231 70E-15
+C28 229 230 70E-15
+I22 213 0 1E-12
+I23 211 0 1E-12
+R76 254 255 6.5E3
+E25 205 199 4 200 17
+E26 197 1 201 1 17
+C29 212 265 5E-12
+R79 265 5 500
+C30 214 190 10E-12
+M24 266 267 190 190 HTX L=3U W=300U
+R80 266 268 1E5
+M25 269 266 190 190 HTR L=3U W=30U
+R81 269 268 1E6
+V25 268 190 5
+C31 269 190 30E-12
+M26 270 269 190 190 HTS L=3U W=30U
+R82 270 268 1E6
+M27 214 270 190 190 HTR L=3U W=3000U
+M28 202 270 228 228 HTR L=3U W=3000U
+M29 271 270 190 190 HTR L=3U W=3000U
+E28 215 264 272 190 -7.2E-3
+I24 190 273 1E-3
+D21 273 190 DD
+V27 273 272 0.65
+R83 190 272 1E6
+C32 202 6 0.3E-12
+E29 267 190 205 1 1
+R84 190 267 1E12
+R85 190 267 1E12
+R86 237 211 20E3
+R87 243 235 20E3
+R88 249 211 20E3
+R89 245 251 20E3
+R90 233 205 1E12
+R91 193 238 1E12
+R93 256 205 1E12
+G14 256 193 97 0 45E-6
+G15 233 238 97 0 5.5E-6
+R94 271 5 1E9
+M30 269 274 190 190 HTT L=3U W=3000U
+M31 275 274 190 190 HTT L=3U W=3000U
+V29 276 190 1
+R95 275 276 1E6
+V30 97 275 -14E-6
+I25 277 1 100E-12
+C33 3 0 3E-12
+M32 277 277 4 4 PIN L=6U W=500U
+M33 278 277 4 4 PIN L=6U W=500U
+I27 4 1 0.1E-6
+G16 4 1 97 0 82.9E-6
+D22 278 3 DD
+R97 227 213 1E9
+R98 223 227 1E9
+R99 224 223 1E9
+R100 190 215 1E9
+R103 190 97 1E9
+M34 274 3 1 1 HTT L=3U W=3000U
+R104 274 276 1E6
+R105 277 4 1E12
+E30 224 214 2 190 1
+R108 1 279 1
+E31 190 0 279 0 1
+R109 279 0 1E12
+D23 1 2 DG
+D24 2 1 DG
+.MODEL HTR NMOS KP=200U VTO=1.5 IS=1E-18 KF=0 AF=0 
+.MODEL HTS NMOS KP=200U VTO=2.7 IS=1E-18 KF=0 AF=0 
+.MODEL HTT NMOS KP=200U VTO=0.7 IS=1E-18 KF=0 AF=0 
+.MODEL HTX NMOS KP=200U VTO=0.7 IS=1E-18 KF=0 AF=0
+*.MODEL DVN D KF=-6.7801e-23 IS=1E-16 AF=0
+.MODEL DIN D KF=0 AF=0
+.MODEL DD D  
+.MODEL DG D RS=3
+.MODEL JC NJF IS=1E-18
+.MODEL QLN NPN 
+.MODEL QLP PNP 
+*.MODEL POUT PMOS KP=200U VTO=-0.7 IS=1E-18 KF=0 AF=0 IS=2897e-5
+*.MODEL NOUT NMOS KP=200U VTO=0.7 IS=1E-18 KF=0 AF=0 IS=2897e-5
+.MODEL POUT PMOS KP=200U VTO=-0.7 IS=2897e-25 KF=0 AF=0 
+.MODEL NOUT NMOS KP=200U VTO=0.7 IS=2897e-25 KF=0 AF=0 
+.MODEL PIN PMOS KP=200U VTO=-0.7 IS=1E-18 KF=0 AF=0
+.MODEL NIN NMOS KP=200U VTO=0.7 IS=1E-18 KF=0 AF=0
+.MODEL HVP PMOS KP=200U VTO=-0.7 IS=1E-18 KF=0 AF=0
+.MODEL HVN NMOS KP=200U VTO=0.7 IS=1E-18 
+.ENDS REFt33
+*************************************************
+.SUBCKT shutdown 10 18 91 cs
+E20 20 18 10 18 0.5
+Ecs cs 18 VALUE={V(96)-V(20)}
+*SHUTDOWN
+RSHIN 91 20 5000K
+ESH3 220 20 91 18 1
+RSHA 220 221 1K
+CSHA 221 20 32P
+ESH2 92 20 221 20 1
+RSH1 92 93 100
+VSH1 93 94 0V
+EHYS 95 94 POLY(2) 10 18 96 20 0 0 0 0 0.33
+RBL 94 20 10K  
+ESH1 95 20 10 18 0.45
+****
+*FSH1 20 96 Vsh1 1
+*CSH1 96 20 10P
+*DSH2 20 96 DA
+*DSH1 96 97 DA
+*VSH2 97 20 1V
+*RSH2 96 20 100K
+E96 96 18 value={if(I(vsh1)<0,2.5,3.5)}
+.MODEL DA D(N=10M)
+*.MODEL DA D
+.ends shutdown
