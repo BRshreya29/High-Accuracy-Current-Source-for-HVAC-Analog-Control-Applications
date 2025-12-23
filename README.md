@@ -35,6 +35,6 @@ readme.md
 
 ---
 
-## ✅ Summary
+## Summary
 
-This repository contains the **complete LTspice simulations**, **hardware validation**, **component analysis**, and **automated test scripts** for a high-accuracy 0–1 mA current source for HVAC analog control applications.
+This repository contains the **complete LTspice simulations**, **hardware validation**, **component analysis**, and **automated test scripts** for a high-accuracy 0–1 mA current source for HVAC analog control applications, undertaken in internship at Siemens Research & Development team, in Integrated Circuits and Electronics Division. 
